@@ -1,0 +1,73 @@
+#!/System/Library/Frameworks/Ruby.framework/Versions/Current/usr/bin/ruby
+
+# Text output formatting
+module Tty
+  module_function
+
+  def blue
+    bold 34
+  end
+
+  def red
+    bold 31
+  end
+
+  def reset
+    escape 0
+  end
+
+  def bold(n = 39)
+    escape "1;#{n}"
+  end
+
+  def underline
+    escape "4;39"
+  end
+
+  def escape(n)
+    "\033[#{n}m" if STDOUT.tty?
+  end
+end
+
+# Command to print to terminal
+def ohai(*args)
+  puts "#{Tty.blue}==>#{Tty.bold} #{args.shell_s}#{Tty.reset}"
+end
+
+# System command check
+def system(*args)
+  abort "Failed during: #{args.shell_s}" unless Kernel.system(*args)
+end
+
+# For calling sudo
+def sudo(*args)
+  args.unshift("-A") unless ENV["SUDO_ASKPASS"].nil?
+  ohai "/usr/bin/sudo", *args
+  system "/usr/bin/sudo", *args
+end
+
+# Look for GitHub
+def git
+  return false if force_curl?
+
+  @git ||= if ENV["GIT"] && File.executable?(ENV["GIT"])
+    ENV["GIT"]
+  elsif Kernel.system "/usr/bin/which -s git"
+    "git"
+  else
+    exe = `xcrun -find git 2>/dev/null`.chomp
+    exe if $? && $?.success? && !exe.empty? && File.executable?(exe)
+  end
+
+  return unless @git
+  # Github only supports HTTPS fetches on 1.7.10 or later:
+  # https://help.github.com/articles/https-cloning-errors
+  `#{@git} --version` =~ /git version (\d\.\d+\.\d+)/
+  return if $1.nil?
+  return if Version.new($1) < "1.7.10"
+
+  @git
+end
+
+ohai "Creating install directory..."
+sudo "/bin/mkdir", "~/robotpy-install"
