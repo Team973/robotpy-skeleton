@@ -29,21 +29,49 @@ module Tty
   end
 end
 
-# Command to print to terminal
+class Array
+  def shell_s
+    cp = dup
+    first = cp.shift
+    cp.map { |arg| arg.gsub " ", "\\ " }.unshift(first).join(" ")
+  end
+end
+
 def ohai(*args)
   puts "#{Tty.blue}==>#{Tty.bold} #{args.shell_s}#{Tty.reset}"
 end
 
-# System command check
+def warn(warning)
+  puts "#{Tty.red}Warning#{Tty.reset}: #{warning.chomp}"
+end
+
 def system(*args)
   abort "Failed during: #{args.shell_s}" unless Kernel.system(*args)
 end
 
-# For calling sudo
 def sudo(*args)
   args.unshift("-A") unless ENV["SUDO_ASKPASS"].nil?
   ohai "/usr/bin/sudo", *args
   system "/usr/bin/sudo", *args
+end
+
+def getc # NOTE only tested on OS X
+  system "/bin/stty raw -echo"
+  if STDIN.respond_to?(:getbyte)
+    STDIN.getbyte
+  else
+    STDIN.getc
+  end
+ensure
+  system "/bin/stty -raw echo"
+end
+
+def wait_for_user
+  puts
+  puts "Press RETURN to continue or any other key to abort"
+  c = getc
+  # we test for \r and \n because some stuff does \r instead
+  abort unless (c == 13) || (c == 10)
 end
 
 # Look for GitHub
@@ -70,4 +98,3 @@ def git
 end
 
 ohai "Creating install directory..."
-sudo "/bin/mkdir", "~/robotpy-install"
