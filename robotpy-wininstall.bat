@@ -26,7 +26,7 @@ start /w Git-2.14.1-64-bit.exe
 
 echo Creating GitHub folder
 if not exist "%HOMEPATH%\Documents\GitHub" mkdir %HOMEPATH%\Documents\GitHub
-cd %HOMEPATH\Documents\GitHub
+cd %HOMEPATH%\Documents\GitHub
 echo Cloning robotpy-testing
 git clone https://github.com/team973/robotpy-testing || goto :error
 echo Opening in Atom
