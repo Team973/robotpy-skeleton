@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
-ROBOT_REPOSITORY = File.join(Dir.home(), "/robotpy-skeleton").freeze
-SKELETON_REPO = "https://github.com/team973/robotpy-skeleton".freeze
+ROBOT_REPOSITORY = File.join(Dir.home(), "/2017-offseason").freeze
+OFFSEASON_REPO = "https://github.com/team973/2017-offseason".freeze
 
 # Detecting OS
 module OS
@@ -202,7 +202,7 @@ def cloneMac
   system gitMac, "init", "-q"
 
   # "git remote add" will fail if the remote is defined in the global config
-  system gitMac, "config", "remote.origin.url", SKELETON_REPO
+  system gitMac, "config", "remote.origin.url", OFFSEASON_REPO
   system gitMac, "config", "remote.origin.fetch", "+refs/heads/*:refs/remotes/origin/*"
 
   # ensure we don't munge line endings on checkout
@@ -220,7 +220,7 @@ def cloneLinux
   system gitLinux, "init", "-q"
 
   # "git remote add" will fail if the remote is defined in the global config
-  system gitLinux, "config", "remote.origin.url", SKELETON_REPO
+  system gitLinux, "config", "remote.origin.url", OFFSEASON_REPO
   system gitLinux, "config", "remote.origin.fetch", "+refs/heads/*:refs/remotes/origin/*"
 
   # ensure we don't munge line endings on checkout
@@ -283,7 +283,7 @@ elsif OS.linux?
   system "/usr/bin/apm install '$(curl -fsSL https://raw.githubusercontent.com/team973/robotpy-skeleton/atompackages)'"
 end
 
-ohai "Cloning robotpy-skeleton..."
+ohai "Cloning 2017-offseason..."
 if ! File.exist?(ROBOT_REPOSITORY)
   Dir.mkdir(ROBOT_REPOSITORY)
 end

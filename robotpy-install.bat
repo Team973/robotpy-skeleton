@@ -16,7 +16,9 @@ if not exist "atompackages" powershell -Command "Invoke-WebRequest https://raw.g
 echo Installing Atom
 if not exist "%HOMEPATH%\AppData\Local\atom\atom.exe" start /w AtomSetup-x64.exe
 echo Installing Atom Packages
-start /w atompackages.bat
+for /f %%a in (atompackages) do (
+apm install %%a || goto :error
+)
 echo Installing Python
 start /w python-3.6.2.exe
 echo Installing Python Modules
@@ -27,11 +29,14 @@ start /w Git-2.14.1-64-bit.exe
 echo Creating GitHub folder
 if not exist "%HOMEPATH%\Documents\GitHub" mkdir %HOMEPATH%\Documents\GitHub
 cd %HOMEPATH%\Documents\GitHub
-echo Cloning robotpy-testing
-git clone https://github.com/team973/robotpy-testing || goto :error
+echo Cloning 2017-offseason
+git clone https://github.com/team973/robotpy-skeleton || goto :error
+echo Testing robot.py
+py -3 robotpy-skeleton\src\robot.py test || goto :error
 echo Opening in Atom
-atom robotpy-testing\src\robot.py
+atom robotpy-skeleton\src\robot.py
 
+echo To setup roborio, please use a unix system.
 echo Done
 
 pause
