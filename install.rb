@@ -241,14 +241,13 @@ def cloneRobot
   end
 end
 
-#Invalidate sudo timestamp before exiting (if it wasn't active before).
+# Invalidate sudo timestamp before exiting (if it wasn't active before).
 Kernel.system "/usr/bin/sudo -n -v 2>/dev/null"
 at_exit { Kernel.system "/usr/bin/sudo", "-k" } unless $?.success?
 
-# The block form of Dir.chdir fails later if Dir.CWD doesn't exist which I
-# guess is fair enough. Also sudo prints a warning message for no good reason
 Dir.chdir(Dir.home())
 
+wait_for_user
 
 ohai "Creating install directory..."
 if ! File.exist?(File.join(Dir.home(), "/robotpy-install"))
@@ -308,4 +307,30 @@ Dir.chdir(ROBOT_REPOSITORY) do
   end
 end
 
+ohai "Installing Python..."
+if OS.mac?
+  system "brew install python3"
+elsif OS.linux?
+  sudo "/usr/bin/apt", "install", "-y", "python3", "python3-pip", "python3-dev"
+end
+
+ohai "Installing Python packages..."
+if OS.mac?
+  system "/usr/local/bin/pip3 install pyfrc coverage robotpy-installer"
+elsif OS.linux?
+  system "/usr/bin/pip3 install pyfrc coverage robotpy-installer"
+end
+
 ohai "Dependencies Installed"
+
+ohai "Testing RobotPy..."
+Dir.chdir(File.join(ROBOT_REPOSITORY, "/src/"))
+if OS.mac?
+  system "/usr/local/bin/python3 robot.py test"
+elsif OS.linux?
+  system "/usr/bin/python3 robot.py test"
+end
+
+ohai "Success! We are done"
+
+wait_for_user
