@@ -316,9 +316,9 @@ end
 
 ohai "Installing Python packages..."
 if OS.mac?
-  system "/usr/local/bin/pip3 install pyfrc coverage robotpy-installer"
+  system "/usr/local/bin/pip3 install pyfrc coverage robotpy-ctre robotpy-installer"
 elsif OS.linux?
-  system "/usr/bin/pip3 install pyfrc coverage robotpy-installer"
+  system "/usr/bin/pip3 install pyfrc coverage robotpy-ctre robotpy-installer"
 end
 
 ohai "Dependencies Installed"

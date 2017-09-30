@@ -22,7 +22,7 @@ apm install %%a || goto :error
 echo Installing Python
 start /w python-3.6.2.exe
 echo Installing Python Modules
-py -3 -m pip install pyfrc coverage pynetworktables robotpy-ctre || goto :error
+py -3 -m pip install pyfrc coverage robotpy-ctre robotpy-installer || goto :error
 echo Installing Git
 start /w Git-2.14.1-64-bit.exe
 
