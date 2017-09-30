@@ -1,7 +1,7 @@
 # robotpy-skeleton
 ## Python (RobotPy) base code for FRC Team 973: Greybots
 
-[![Build Status](https://travis-ci.com/Team973/2017-inseason.svg?token=PMQ4h4i9r3eRUJnsCJBt&branch=master)](https://travis-ci.com/Team973/2017-inseason)
+[![Build Status](https://travis-ci.org/Team973/robotpy-skeleton.svg?branch=master)](https://travis-ci.com/Team973/2017-inseason)
 [![FRC Year](https://img.shields.io/badge/frc-2017-brightgreen.svg)](https://www.firstinspires.com/robotics/frc/game-and-season)
 [![Language Type](https://img.shields.io/badge/language-python-brightgreen.svg)](https://http://robotpy.readthedocs.io/)
 
@@ -16,7 +16,7 @@ macOS & Debian Variant:
 ```
 
 Windows:
-1.. Download [robotpy-install.bat](https://raw.githubusercontent.com/team973/robotpy-skeleton/robotpy-install.bat)
+1. Download [robotpy-install.bat](https://raw.githubusercontent.com/team973/robotpy-skeleton/robotpy-install.bat)
 2. Double click downloaded file.
 
 973 Install:

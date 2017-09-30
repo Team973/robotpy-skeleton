@@ -1,0 +1,15 @@
+language: python
+
+matrix:
+    include:
+        - os: linux
+          dist: trusty
+          python: 3.6
+          env: TOXENV=py36
+        - os: osx
+          language: generic
+          env: TOXENV=py36
+install: ./.travis/install.sh
+script:
+  - cd src
+  - python3 robot.py test
