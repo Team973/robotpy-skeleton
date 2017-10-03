@@ -196,22 +196,22 @@ else
   REPO = "https://github.com/team973/robotpy-skeleton".freeze
 end
 
-if ! ARGV[0] == "travis"
+unless ARGV[0] == "travis"
   wait_for_user
 end
 
 ohai "Creating install directory..."
-if ! File.exist?(File.join(Dir.home(), "/robotpy-install"))
+unless File.exist?(File.join(Dir.home(), "/robotpy-install"))
   Dir.mkdir(File.join(Dir.home(), "/robotpy-install"))
 end
 Dir.chdir(File.join(Dir.home(), "/robotpy-install"))
 
 if OS.mac?
-  if ! brew
+  unless brew
     ohai "Installing Homebrew..."
     system '/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"'
   end
-  if ! atom
+  unless atom
     ohai "Installing Atom for macOS..."
     if File.exist?("atom-mac.zip")
       puts "Already Downloaded, remove file to redownload."
@@ -224,7 +224,7 @@ if OS.mac?
   end
   system "/Applications/Atom.app/Contents/Resources/app/apm/node_modules/.bin/apm install $(curl -fsSL https://raw.githubusercontent.com/team973/robotpy-skeleton/master/atompackages)"
 elsif OS.linux?
-  if ! atom
+  unless atom
     ohai "Installing Atom for Debian..."
     if File.exist?("atom-amd64.deb")
       puts "Already downloaded, remove file to redownload."
@@ -241,12 +241,12 @@ elsif OS.linux?
 end
 
 ohai "Cloning selected repository..."
-if ! ARGV[0] = "travis"
-  if ! File.exist?(File.join(Dir.home(), "/Documents/GitHub"))
+unless ARGV[0] == "travis"
+  unless File.exist?(File.join(Dir.home(), "/Documents/GitHub"))
     Dir.mkdir(File.join(Dir.home(), "/Documents/GitHub"))
     Dir.chdir(File.join(Dir.home(), "/Documents/GitHub"))
   end
-  if ! File.exist?(ROBOT_REPOSITORY)
+  unless File.exist?(ROBOT_REPOSITORY)
     Dir.mkdir(ROBOT_REPOSITORY)
   end
   Dir.chdir(ROBOT_REPOSITORY) do
@@ -265,10 +265,10 @@ if ! ARGV[0] = "travis"
   end
 end
 
-if ! python3
+unless python3
   ohai "Installing Python3..."
   if OS.mac?
-    if ARGV[0] = "travis"
+    if ARGV[0] == "travis"
       system "HOMEBREW_NO_AUTO_UPDATE=1 brew install python3"
     else
       system brew, "install", "python3"
@@ -278,7 +278,7 @@ if ! python3
   end
 end
 
-if ! pip3
+unless pip3
   ohai "Installing pip3..."
   if OS.mac?
     system brew, "install", "python3"
@@ -293,8 +293,8 @@ system pip3, "install", "pyfrc", "coverage", "robotpy-installer"
 ohai "Dependencies Installed"
 
 ohai "Testing RobotPy..."
-if ! ARGV[0] = "travis"
-  if ARGV[0] = "973"
+if !ARGV[0] == "travis"
+  if ARGV[0] == "973"
     Dir.chdir(File.join(ROBOT_REPOSITORY, "/wood/src/"))
   else
     Dir.chdir(File.join(ROBOT_REPOSITORY, "/src/"))
@@ -307,8 +307,7 @@ system python3, "robot.py", "test"
 ohai "Success! We are done"
 
 ohai "ONLY HIT ENTER IF YOU WANT TO SETUP ROBORIO! Otherwise, hit ^C."
-if ! ARGV[0] == "travis"
+unless ARGV[0] == "travis"
   wait_for_user
-
   system '/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/team973/robotpy-skeleton/master/roborio_setup.rb)"'
 end
