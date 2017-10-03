@@ -232,7 +232,7 @@ elsif OS.linux?
     sudo "/usr/bin/dpkg", "-i", "atom-amd64.deb"
     sudo "/usr/bin/apt", "-f", "install"
   end
-  system '/usr/bin/apm install "$(curl -fsSL https://raw.githubusercontent.com/team973/robotpy-skeleton/master/atompackages)"'
+  system "/usr/bin/apm install $(curl -fsSL https://raw.githubusercontent.com/team973/robotpy-skeleton/master/atompackages)"
 end
 
 ohai "Cloning selected repository..."
