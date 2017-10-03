@@ -269,7 +269,7 @@ unless python3
   ohai "Installing Python3..."
   if OS.mac?
     if ARGV[0] == "travis"
-      system "HOMEBREW_NO_AUTO_UPDATE=1 brew install python3"
+      system "HOMEBREW_NO_AUTO_UPDATE=1 brew install python3" # Takes a long time to update on travis
     else
       system brew, "install", "python3"
     end
@@ -288,19 +288,23 @@ unless pip3
 end
 
 ohai "Installing Python packages...."
-system pip3, "install", "pyfrc", "coverage", "robotpy-installer"
+begin
+  system pip3, "install", "-q", "pyfrc", "coverage", "robotpy-installer"
+rescue Exception # Shouldn't do this, but too lazy to find actual exception
+  system pip3, "install", "-q", "--user" "pyfrc", "coverage", "robotpy-installer"
+end
 
 ohai "Dependencies Installed"
 
 ohai "Testing RobotPy..."
-if !ARGV[0] == "travis"
+if ARGV[0] == "travis"
+  Dir.chdir(File.join(Dir.home(), "build/Team973/robotpy-skeleton/src/"))
+else
   if ARGV[0] == "973"
     Dir.chdir(File.join(ROBOT_REPOSITORY, "/wood/src/"))
   else
     Dir.chdir(File.join(ROBOT_REPOSITORY, "/src/"))
   end
-else
-  Dir.chdir(File.join(Dir.home(), "build/Team973/robotpy-skeleton/src/"))
 end
 system python3, "robot.py", "test"
 
