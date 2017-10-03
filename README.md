@@ -12,22 +12,22 @@ Regular install:
 
 macOS & Debian Variant:
 ```
-/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/team973/robotpy-skeleton/install.rb)"
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/team973/robotpy-skeleton/master/install.rb)"
 ```
 
 Windows:
-1. Download [robotpy-install.bat](https://raw.githubusercontent.com/team973/robotpy-skeleton/robotpy-install.bat)
+1. Download [robotpy-install.bat](https://raw.githubusercontent.com/team973/robotpy-skeleton/master/robotpy-install.bat)
 2. Double click downloaded file.
 
 973 Install:
 
 macOS & Debian Variant:
 ```
-/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/team973/robotpy-skeleton/install.rb)" 973
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/team973/robotpy-skeleton/master/install.rb)" 973
 ```
 
 Windows:
-1. Download [robotpy-973install.bat](https://raw.githubusercontent.com/team973/robotpy-skeleton/robotpy-973install.bat)
+1. Download [robotpy-973install.bat](https://raw.githubusercontent.com/team973/robotpy-skeleton/master/robotpy-973install.bat)
 2. Double click downloaded file.
 
 ## Manual Installation
