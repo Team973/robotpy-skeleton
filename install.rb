@@ -293,10 +293,14 @@ system pip3, "install", "pyfrc", "coverage", "robotpy-installer"
 ohai "Dependencies Installed"
 
 ohai "Testing RobotPy..."
-if ARGV[0] = "973"
-  Dir.chdir(File.join(ROBOT_REPOSITORY, "/wood/src/"))
+if ! ARGV[0] = "travis"
+  if ARGV[0] = "973"
+    Dir.chdir(File.join(ROBOT_REPOSITORY, "/wood/src/"))
+  else
+    Dir.chdir(File.join(ROBOT_REPOSITORY, "/src/"))
+  end
 else
-  Dir.chdir(File.join(ROBOT_REPOSITORY, "/src/"))
+  Dir.chdir("src/")
 end
 system python3, "robot.py", "test"
 
