@@ -233,7 +233,7 @@ elsif OS.linux?
     end
     begin
       sudo "/usr/bin/dpkg", "-i", "atom-amd64.deb"
-    rescue
+    rescue Exception # Shouldn't do this, but too lazy to find actual exception
       sudo "/usr/bin/apt", "-f", "install"
     end
   end
@@ -269,7 +269,7 @@ if ! python3
   ohai "Installing Python3..."
   if OS.mac?
     if ARGV[0] = "travis"
-      system "HOMEBREW_NO_AUTO_UPDATE=1", brew, "install", "python3"
+      system "HOMEBREW_NO_AUTO_UPDATE=1 brew install python3"
     else
       system brew, "install", "python3"
     end
