@@ -238,24 +238,26 @@ elsif OS.linux?
 end
 
 ohai "Cloning selected repository..."
-if ! File.exist?(File.join(Dir.home(), "/Documents/GitHub"))
-  Dir.mkdir(File.join(Dir.home(), "/Documents/GitHub"))
-  Dir.chdir(File.join(Dir.home(), "/Documents/GitHub"))
-end
-if ! File.exist?(ROBOT_REPOSITORY)
-  Dir.mkdir(ROBOT_REPOSITORY)
-end
-Dir.chdir(ROBOT_REPOSITORY) do
-  if git
-    cloneRobot
-  else
-    ohai "Must install git first..."
-    if OS.mac?
-      system brew, "install", "git"
+if ! ARGV[0] = "travis"
+  if ! File.exist?(File.join(Dir.home(), "/Documents/GitHub"))
+    Dir.mkdir(File.join(Dir.home(), "/Documents/GitHub"))
+    Dir.chdir(File.join(Dir.home(), "/Documents/GitHub"))
+  end
+  if ! File.exist?(ROBOT_REPOSITORY)
+    Dir.mkdir(ROBOT_REPOSITORY)
+  end
+  Dir.chdir(ROBOT_REPOSITORY) do
+    if git
       cloneRobot
-    elsif OS.linux?
-      sudo "/usr/bin/apt", "install", "-y", "git"
-      cloneRobot
+    else
+      ohai "Must install git first..."
+      if OS.mac?
+        system brew, "install", "git"
+        cloneRobot
+      elsif OS.linux?
+        sudo "/usr/bin/apt", "install", "-y", "git"
+        cloneRobot
+      end
     end
   end
 end
@@ -263,7 +265,11 @@ end
 if ! python3
   ohai "Installing Python3..."
   if OS.mac?
-    system brew, "install", "python3"
+    if ARGV[0] = "travis"
+      system "HOMEBREW_NO_AUTO_UPDATE=1", brew, "install", "python3"
+    else
+      system brew, "install", "python3"
+    end
   elsif OS.linux?
     sudo "/usr/bin/apt", "install", "-y", "python3", "python3-dev"
   end
