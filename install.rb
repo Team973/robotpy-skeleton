@@ -231,8 +231,11 @@ elsif OS.linux?
     else
       system "/usr/bin/curl -Lo atom-amd64.deb https://atom.io/download/deb"
     end
-    sudo "/usr/bin/dpkg", "-i", "atom-amd64.deb"
-    sudo "/usr/bin/apt", "-f", "install"
+    begin
+      sudo "/usr/bin/dpkg", "-i", "atom-amd64.deb"
+    rescue
+      sudo "/usr/bin/apt", "-f", "install"
+    end
   end
   system "/usr/bin/apm install $(curl -fsSL https://raw.githubusercontent.com/team973/robotpy-skeleton/master/atompackages)"
 end

@@ -6,5 +6,6 @@ matrix:
           dist: trusty
           sudo: required
         - os: osx
+          language: generic
 script:
   -  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/team973/robotpy-skeleton/master/install.rb)" travis
