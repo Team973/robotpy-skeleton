@@ -288,11 +288,7 @@ if ! pip3
 end
 
 ohai "Installing Python packages...."
-if ! ARGV[0] = "travis"
-  system pip3, "install", "pyfrc", "coverage", "robotpy-installer"
-else
-  system "pip install pyfrc coverage robotpy-installer"
-end
+system pip3, "install", "pyfrc", "coverage", "robotpy-installer"
 
 ohai "Dependencies Installed"
 
@@ -304,7 +300,7 @@ if ! ARGV[0] = "travis"
     Dir.chdir(File.join(ROBOT_REPOSITORY, "/src/"))
   end
 else
-  Dir.chdir("Team973/robotpy-skeleton/src/")
+  Dir.chdir(File.join(Dir.home(), "build/Team973/robotpy-skeleton/src/"))
 end
 system python3, "robot.py", "test"
 
