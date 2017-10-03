@@ -1,6 +1,4 @@
 #!/usr/bin/ruby
-ROBOT_REPOSITORY = File.join(Dir.home(), "/robotpy-skeleton").freeze
-SKELETON_REPO = "https://github.com/team973/robotpy-skeleton".freeze
 
 # Detecting OS
 module OS
@@ -58,37 +56,41 @@ class Array
   end
 end
 
+# Beautiful printing
 def ohai(*args)
   puts "#{Tty.blue}==>#{Tty.bold} #{args.shell_s}#{Tty.reset}"
 end
 
+# For warning the user
 def warn(warning)
   puts "#{Tty.red}Warning#{Tty.reset}: #{warning.chomp}"
 end
 
+# For running system commands
 def system(*args)
   abort "Failed during: #{args.shell_s}" unless Kernel.system(*args)
 end
 
+# For using sudo
 def sudo(*args)
   args.unshift("-A") unless ENV["SUDO_ASKPASS"].nil?
   ohai "/usr/bin/sudo", *args
   system "/usr/bin/sudo", *args
 end
 
-if OS.mac?
-  def getc # NOTE only tested on OS X
-    system "/bin/stty raw -echo"
-    if STDIN.respond_to?(:getbyte)
-      STDIN.getbyte
-    else
-      STDIN.getc
-    end
-  ensure
-    system "/bin/stty -raw echo"
+
+def getc
+  system "/bin/stty raw -echo"
+  if STDIN.respond_to?(:getbyte)
+    STDIN.getbyte
+  else
+    STDIN.getc
   end
+ensure
+  system "/bin/stty -raw echo"
 end
 
+# Requires user to hit enter
 def wait_for_user
   puts
   puts "Press RETURN to continue or any other key to abort"
@@ -97,43 +99,10 @@ def wait_for_user
   abort unless (c == 13) || (c == 10)
 end
 
-class Version
-  include Comparable
-  attr_reader :parts
-
-  def initialize(str)
-    @parts = str.split(".").map { |p| p.to_i }
-  end
-
-  def <=>(other)
-    parts <=> self.class.new(other).parts
-  end
-end
-
-# Look for GitHub
-def gitMac
-  @git ||= if ENV["GIT"] && File.executable?(ENV["GIT"])
-    ENV["GIT"]
-  elsif Kernel.system "/usr/bin/which -s git"
-    "git"
-  else
-    exe = `xcrun -find git 2>/dev/null`.chomp
-    exe if $? && $?.success? && !exe.empty? && File.executable?(exe)
-  end
-
-  return unless @git
-  # Github only supports HTTPS fetches on 1.7.10 or later:
-  # https://help.github.com/articles/https-cloning-errors
-  `#{@git} --version` =~ /git version (\d\.\d+\.\d+)/
-  return if $1.nil?
-  return if Version.new($1) < "1.7.10"
-
-  @git
-end
-
-def gitLinux
-  @git ||= if ENV["GIT"] && File.executable?(ENV["GIT"])
-    ENV["GIT"]
+# For finding Atom
+def git
+  @git ||= if ENV["git"] && File.executable?(ENV["git"])
+    ENV["git"]
   elsif Kernel.system "/usr/bin/which -a git"
     "git"
   else
@@ -141,50 +110,11 @@ def gitLinux
     exe if $? && $?.success? && !exe.empty? && File.executable?(exe)
   end
 
-  return unless @git
-  # Github only supports HTTPS fetches on 1.7.10 or later:
-  # https://help.github.com/articles/https-cloning-errors
-  `#{@git} --version` =~ /git version (\d\.\d+\.\d+)/
-  return if $1.nil?
-  return if Version.new($1) < "1.7.10"
-
   @git
 end
 
-def gitLinux
-  @git ||= if ENV["GIT"] && File.executable?(ENV["GIT"])
-    ENV["GIT"]
-  elsif Kernel.system "/usr/bin/which -a git"
-    "git"
-  else
-    exe = `xcrun -find git 2>/dev/null`.chomp
-    exe if $? && $?.success? && !exe.empty? && File.executable?(exe)
-  end
-
-  return unless @git
-  # Github only supports HTTPS fetches on 1.7.10 or later:
-  # https://help.github.com/articles/https-cloning-errors
-  `#{@git} --version` =~ /git version (\d\.\d+\.\d+)/
-  return if $1.nil?
-  return if Version.new($1) < "1.7.10"
-
-  @git
-end
-
-def atomMac
-  @atom ||= if ENV["atom"] && File.executable?(ENV["atom"])
-    ENV["atom"]
-  elsif Kernel.system "/usr/bin/which -s atom"
-    "atom"
-  else
-    exe = `xcrun -find atom 2>/dev/null`.chomp
-    exe if $? && $?.success? && !exe.empty? && File.executable?(exe)
-  end
-
-  @atom
-end
-
-def atomLinux
+# For finding Atom
+def atom
   @atom ||= if ENV["atom"] && File.executable?(ENV["atom"])
     ENV["atom"]
   elsif Kernel.system "/usr/bin/which -a atom"
@@ -197,48 +127,57 @@ def atomLinux
   @atom
 end
 
-def cloneMac
-  # we do it in four steps to avoid merge errors when reinstalling
-  system gitMac, "init", "-q"
+# For finding Homebrew
+def brew
+  @brew ||= if ENV["brew"] && File.executable?(ENV["brew"])
+    ENV["brew"]
+  elsif Kernel.system "/usr/bin/which -a brew"
+    "brew"
+  else
+    exe = `xcrun -find brew 2>/dev/null`.chomp
+    exe if $? && $?.success? && !exe.empty? && File.executable?(exe)
+  end
 
-  # "git remote add" will fail if the remote is defined in the global config
-  system gitMac, "config", "remote.origin.url", SKELETON_REPO
-  system gitMac, "config", "remote.origin.fetch", "+refs/heads/*:refs/remotes/origin/*"
-
-  # ensure we don't munge line endings on checkout
-  system gitMac, "config", "core.autocrlf", "false"
-
-  args = gitMac, "fetch", "origin", "master:refs/remotes/origin/master",
-         "--tags", "--force"
-  system(*args)
-
-  system gitMac, "reset", "--hard", "origin/master"
+  @brew
 end
 
-def cloneLinux
-  # we do it in four steps to avoid merge errors when reinstalling
-  system gitLinux, "init", "-q"
+# For finding python3
+def python3
+  @python3 ||= if ENV["python3"] && File.executable?(ENV["python3"])
+    ENV["python3"]
+  elsif Kernel.system "/usr/bin/which -a python3"
+    "python3"
+  else
+    exe = `xcrun -find python3 2>/dev/null`.chomp
+    exe if $? && $?.success? && !exe.empty? && File.executable?(exe)
+  end
 
-  # "git remote add" will fail if the remote is defined in the global config
-  system gitLinux, "config", "remote.origin.url", SKELETON_REPO
-  system gitLinux, "config", "remote.origin.fetch", "+refs/heads/*:refs/remotes/origin/*"
+  @python3
+end
 
-  # ensure we don't munge line endings on checkout
-  system gitLinux, "config", "core.autocrlf", "false"
+# For finding pip3
+def pip3
+  @pip3 ||= if ENV["pip3"] && File.executable?(ENV["pip3"])
+    ENV["pip3"]
+  elsif Kernel.system "/usr/bin/which -a pip3"
+    "pip3"
+  else
+    exe = `xcrun -find pip3 2>/dev/null`.chomp
+    exe if $? && $?.success? && !exe.empty? && File.executable?(exe)
+  end
 
-  args = gitLinux, "fetch", "origin", "master:refs/remotes/origin/master",
-         "--tags", "--force"
-  system(*args)
-
-  system gitLinux, "reset", "--hard", "origin/master"
+  @pip3
 end
 
 def cloneRobot
-  if OS.mac?
-    cloneMac
-  elsif OS.linux?
-    cloneLinux
-  end
+  system git, "init", "-q"
+  system git, "config", "remote.origin.url", REPO
+  system git, "config", "remote.origin.fetch", "+refs/heads/*:refs/remotes/origin/*"
+  system git, "config", "core.autocrlf", "false"
+  args = git, "fetch", "origin", "master:refs/remotes/origin/master",
+         "--tags", "--force"
+  system(*args)
+  system git, "reset", "--hard", "origin/master"
 end
 
 # Invalidate sudo timestamp before exiting (if it wasn't active before).
@@ -246,6 +185,16 @@ Kernel.system "/usr/bin/sudo -n -v 2>/dev/null"
 at_exit { Kernel.system "/usr/bin/sudo", "-k" } unless $?.success?
 
 Dir.chdir(Dir.home())
+
+if ARGV[0] == "973"
+  puts "Using 973's 2017-offseason..."
+  ROBOT_REPOSITORY = File.join(Dir.home(), "/Documents/GitHub/2017-offseason").freeze
+  REPO = "https://github.com/team973/2017-offseason".freeze
+else
+  warn "No argument supplied/argument not supported, defaulting..."
+  ROBOT_REPOSITORY = File.join(Dir.home(), "/Documents/GitHub/robotpy-skeleton").freeze
+  REPO = "https://github.com/team973/robotpy-skeleton".freeze
+end
 
 wait_for_user
 
@@ -256,49 +205,51 @@ end
 Dir.chdir(File.join(Dir.home(), "/robotpy-install"))
 
 if OS.mac?
-  ohai "Installing Homebrew..."
-  system "/usr/bin/ruby -e '$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)'"
-  ohai "Installing Atom for macOS..."
-  if File.exist?("atom-mac.zip")
-    puts "Already Downloaded, remove file to redownload."
-  else
-    system "/usr/bin/curl -Lo atom-mac.zip https://atom.io/download/mac"
+  if ! brew
+    ohai "Installing Homebrew..."
+    system '/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"'
   end
-  if ! atomMac
+  if ! atom
+    ohai "Installing Atom for macOS..."
+    if File.exist?("atom-mac.zip")
+      puts "Already Downloaded, remove file to redownload."
+    else
+      system "/usr/bin/curl -Lo atom-mac.zip https://atom.io/download/mac"
+    end
     system "/usr/bin/unzip -qq atom-mac.zip"
     sudo "/bin/cp", "-R", "Atom.app", "/Applications/"
       puts "Next step: Open Atom after done and go to Atom>Install Shell Commands"
   end
-  system "/Applications/Atom.app/Contents/Resources/app/apm/node_modules/.bin/apm install '$(curl -fsSL https://raw.githubusercontent.com/team973/robotpy-skeleton/atompackages)'"
+  #system "/Applications/Atom.app/Contents/Resources/app/apm/node_modules/.bin/apm install $(curl -fsSL https://raw.githubusercontent.com/team973/robotpy-skeleton/master/atompackages)"
 elsif OS.linux?
-  ohai "Installing Atom for Debian..."
-  if File.exist?("atom-amd64.deb")
-    puts "Already downloaded, remove file to redownload."
-  else
-    system "/usr/bin/curl -Lo atom-amd64.deb https://atom.io/download/deb"
-  end
-  if ! atomLinux
+  if ! atom
+    ohai "Installing Atom for Debian..."
+    if File.exist?("atom-amd64.deb")
+      puts "Already downloaded, remove file to redownload."
+    else
+      system "/usr/bin/curl -Lo atom-amd64.deb https://atom.io/download/deb"
+    end
     sudo "/usr/bin/dpkg", "-i", "atom-amd64.deb"
+    sudo "/usr/bin/apt", "-f", "install"
   end
-  system "/usr/bin/apm install '$(curl -fsSL https://raw.githubusercontent.com/team973/robotpy-skeleton/atompackages)'"
+  system '/usr/bin/apm install "$(curl -fsSL https://raw.githubusercontent.com/team973/robotpy-skeleton/master/atompackages)"'
 end
 
-ohai "Cloning robotpy-skeleton..."
+ohai "Cloning selected repository..."
+if ! File.exist?(File.join(Dir.home(), "/Documents/GitHub"))
+  Dir.mkdir(File.join(Dir.home(), "/Documents/GitHub"))
+  Dir.chdir(File.join(Dir.home(), "/Documents/GitHub"))
+end
 if ! File.exist?(ROBOT_REPOSITORY)
   Dir.mkdir(ROBOT_REPOSITORY)
 end
 Dir.chdir(ROBOT_REPOSITORY) do
-  if OS.mac?
-    if gitMac
-      cloneRobot
-    end
-  elsif OS.linux?
-    if gitLinux
-      cloneRobot
-    end
+  if git
+    cloneRobot
   else
+    ohai "Must install git first..."
     if OS.mac?
-      system "/usr/local/bin/brew install git"
+      system brew, "install", "git"
       cloneRobot
     elsif OS.linux?
       sudo "/usr/bin/apt", "install", "-y", "git"
@@ -307,33 +258,40 @@ Dir.chdir(ROBOT_REPOSITORY) do
   end
 end
 
-ohai "Installing Python..."
-if OS.mac?
-  system "brew install python3"
-elsif OS.linux?
-  sudo "/usr/bin/apt", "install", "-y", "python3", "python3-pip", "python3-dev"
+if ! python3
+  ohai "Installing Python3..."
+  if OS.mac?
+    system brew, "install", "python3"
+  elsif OS.linux?
+    sudo "/usr/bin/apt", "install", "-y", "python3", "python3-dev"
+  end
 end
 
-ohai "Installing Python packages..."
-if OS.mac?
-  system "/usr/local/bin/pip3 install pyfrc coverage robotpy-installer"
-elsif OS.linux?
-  system "/usr/bin/pip3 install pyfrc coverage robotpy-installer"
+if ! pip3
+  ohai "Installing pip3..."
+  if OS.mac?
+    system brew, "install", "python3"
+  elsif OS.linux?
+    sudo "/usr/bin/apt", "install", "-y", "python3-pip"
+  end
 end
+
+ohai "Installing Python packages...."
+system pip3, "install", "pyfrc", "coverage", "robotpy-installer"
 
 ohai "Dependencies Installed"
 
 ohai "Testing RobotPy..."
-Dir.chdir(File.join(ROBOT_REPOSITORY, "/src/"))
-if OS.mac?
-  system "/usr/local/bin/python3 robot.py test"
-elsif OS.linux?
-  system "/usr/bin/python3 robot.py test"
+if ARGV[0] = "973"
+  Dir.chdir(File.join(ROBOT_REPOSITORY, "/wood/src/"))
+else
+  Dir.chdir(File.join(ROBOT_REPOSITORY, "/src/"))
 end
+system python3, "robot.py", "test"
 
 ohai "Success! We are done"
 
 ohai "ONLY HIT ENTER IF YOU WANT TO SETUP ROBORIO! Otherwise, hit ^C."
 wait_for_user
 
-system "/usr/bin/ruby -e '$(curl -fsSL https://raw.githubusercontent.com/team973/robotpy-skeleton/roborio_setup.rb)'"
+system '/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/team973/robotpy-skeleton/master/roborio_setup.rb)"'
