@@ -9,7 +9,5 @@ matrix:
         - os: osx
           language: generic
           env: TOXENV=py36
-install: ./.travis/install.sh
 script:
-  - cd src
-  - python3 robot.py test
+  -  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/team973/robotpy-skeleton/install.rb)" travis

@@ -196,7 +196,9 @@ else
   REPO = "https://github.com/team973/robotpy-skeleton".freeze
 end
 
-wait_for_user
+if ! ARGV[0] == "travis"
+  wait_for_user
+end
 
 ohai "Creating install directory..."
 if ! File.exist?(File.join(Dir.home(), "/robotpy-install"))
@@ -292,6 +294,8 @@ system python3, "robot.py", "test"
 ohai "Success! We are done"
 
 ohai "ONLY HIT ENTER IF YOU WANT TO SETUP ROBORIO! Otherwise, hit ^C."
-wait_for_user
+if ! ARGV[0] == "travis"
+  wait_for_user
 
-system '/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/team973/robotpy-skeleton/master/roborio_setup.rb)"'
+  system '/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/team973/robotpy-skeleton/master/roborio_setup.rb)"'
+end
