@@ -6,7 +6,6 @@ matrix:
           dist: trusty
           sudo: required
           language: ruby
-          python: 3.6
         - os: osx
           language: ruby
 script:
