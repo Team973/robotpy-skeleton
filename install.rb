@@ -220,7 +220,7 @@ if OS.mac?
     sudo "/bin/cp", "-R", "Atom.app", "/Applications/"
       puts "Next step: Open Atom after done and go to Atom>Install Shell Commands"
   end
-  #system "/Applications/Atom.app/Contents/Resources/app/apm/node_modules/.bin/apm install $(curl -fsSL https://raw.githubusercontent.com/team973/robotpy-skeleton/master/atompackages)"
+  system "/Applications/Atom.app/Contents/Resources/app/apm/node_modules/.bin/apm install $(curl -fsSL https://raw.githubusercontent.com/team973/robotpy-skeleton/master/atompackages)"
 elsif OS.linux?
   if ! atom
     ohai "Installing Atom for Debian..."

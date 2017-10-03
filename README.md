@@ -12,7 +12,7 @@ Regular install:
 
 macOS & Debian Variant:
 ```
-/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/team973/robotpy-skeleton/install.rb)
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/team973/robotpy-skeleton/install.rb)"
 ```
 
 Windows:
@@ -23,7 +23,7 @@ Windows:
 
 macOS & Debian Variant:
 ```
-/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/team973/robotpy-skeleton/973install.rb)
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/team973/robotpy-skeleton/install.rb)" 973
 ```
 
 Windows:
