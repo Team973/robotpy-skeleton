@@ -258,7 +258,7 @@ unless ARGV[0] == "travis"
         system brew, "install", "git"
         cloneRobot
       elsif OS.linux?
-        sudo "/usr/bin/apt", "install", "-y", "git"
+        sudo "/usr/bin/apt", "-qq", "install", "-y", "git"
         cloneRobot
       end
     end
@@ -274,7 +274,7 @@ unless python3
       system brew, "install", "python3"
     end
   elsif OS.linux?
-    sudo "/usr/bin/apt", "install", "-y", "python3", "python3-dev"
+    sudo "/usr/bin/apt", "-qq", "install", "-y", "python3", "python3-dev"
   end
 end
 
@@ -283,15 +283,15 @@ unless pip3
   if OS.mac?
     system brew, "install", "python3"
   elsif OS.linux?
-    sudo "/usr/bin/apt", "install", "-y", "python3-pip"
+    sudo "/usr/bin/apt", "-qq", "install", "-y", "python3-pip"
   end
 end
 
 ohai "Installing Python packages...."
 begin
-  system pip3, "install", "-q", "pyfrc", "coverage", "robotpy-installer"
+  system pip3, "-qq", "install","pyfrc", "coverage", "robotpy-installer"
 rescue Exception # Shouldn't do this, but too lazy to find actual exception
-  system pip3, "install", "-q", "--user" "pyfrc", "coverage", "robotpy-installer"
+  system pip3, "-qq", "install", "--user" "pyfrc", "coverage", "robotpy-installer"
 end
 
 ohai "Dependencies Installed"

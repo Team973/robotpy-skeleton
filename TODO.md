@@ -1,4 +1,4 @@
 ## To do:
 - Fix exceptions in install.rb
-- Quieter install
 - Bash parameters
+- Faster Travis-CI for OSX
