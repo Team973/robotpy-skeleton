@@ -99,6 +99,34 @@ def wait_for_user
   abort unless (c == 13) || (c == 10)
 end
 
+# For finding python3
+def robotpy_installer
+  @robotpy_installer ||= if ENV["robotpy-installer"] && File.executable?(ENV["robotpy-installer"])
+    ENV["robotpy-installer"]
+  elsif Kernel.system "/usr/bin/which -a robotpy-installer"
+    "robotpy-installer"
+  else
+    exe = `xcrun -find robotpy-installer 2>/dev/null`.chomp
+    exe if $? && $?.success? && !exe.empty? && File.executable?(exe)
+  end
+
+  @robotpy_installer
+end
+
+# For finding pip3
+def pip3
+  @pip3 ||= if ENV["pip3"] && File.executable?(ENV["pip3"])
+    ENV["pip3"]
+  elsif Kernel.system "/usr/bin/which -a pip3"
+    "pip3"
+  else
+    exe = `xcrun -find pip3 2>/dev/null`.chomp
+    exe if $? && $?.success? && !exe.empty? && File.executable?(exe)
+  end
+
+  @pip3
+end
+
 # Invalidate sudo timestamp before exiting (if it wasn't active before).
 Kernel.system "/usr/bin/sudo -n -v 2>/dev/null"
 at_exit { Kernel.system "/usr/bin/sudo", "-k" } unless $?.success?
@@ -106,36 +134,19 @@ at_exit { Kernel.system "/usr/bin/sudo", "-k" } unless $?.success?
 ohai "Unplug ethernet if plugged in!"
 wait_for_user
 
-if OS.mac?
-  ohai "Grabbing dependencies..."
-  system "/usr/local/bin/pip3 install robotpy-installer"
 
-  ohai "Downloading RobotPy for RoboRio..."
-  system "/usr/local/bin/robotpy-installer download-robotpy"
-  ohai "Downloading cscore, ctre..."
-  system "/usr/local/bin/robotpy-installer download-opkg python36-robotpy-cscore python36-robotpy-ctre"
-  puts "Plug in ethernet now!"
-  wait_for_user
+ohai "Grabbing dependencies..."
+system pip3, "-qq", "install", "robotpy-installer"
 
-  ohai "Installing RobotPy for RoboRio..."
-  system File.join("/usr/local/bin/robotpy-installer install-robotpy --robot ", ROBOT_LOCATION)
-  ohai "Installing cscore, ctre..."
-  system File.join("/usr/local/bin/robotpy-installer install-opkg --robot ", ROBOT_LOCATION, "python36-robotpy-cscore python36-robotpy-ctre")
-  ohai "Success! You may unplug ethernet now."
-elsif OS.linux?
-  ohai "Grabbing dependencies..."
-  system "/usr/bin/pip3 install robotpy-installer"
+ohai "Downloading RobotPy for RoboRio..."
+system robotpy_installer, "download-robotpy"
+ohai "Downloading cscore, ctre..."
+system robotpy_installer, "download-opkg", "python36-robotpy-cscore", "python36-robotpy-ctre"
+puts "Plug in ethernet now!"
+wait_for_user
 
-  ohai "Downloading RobotPy for RoboRio..."
-  system "/usr/bin/robotpy-installer download-robotpy"
-  ohai "Downloading cscore, ctre..."
-  system "/usr/bin/robotpy-installer download-opkg python36-robotpy-cscore python36-robotpy-ctre"
-  puts "Plug in ethernet now!"
-  wait_for_user
-
-  ohai "Installing RobotPy for RoboRio..."
-  system File.join("/usr/bin/robotpy-installer install-robotpy --robot ", ROBOT_LOCATION)
-  ohai "Installing cscore, ctre..."
-  system File.join("/usr/bin/robotpy-installer install-opkg --robot ", ROBOT_LOCATION, "python36-robotpy-cscore python36-robotpy-ctre")
-  ohai "Success! You may unplug ethernet now."
-end
+ohai "Installing RobotPy for RoboRio..."
+system File.join(robotpy_installer, "install-robotpy", "--robot ", ROBOT_LOCATION)
+ohai "Installing cscore, ctre..."
+system File.join(robotpy_installer, "install-opkg", "--robot ", ROBOT_LOCATION, " python36-robotpy-cscore", "python36-robotpy-ctre")
+ohai "Success! You may unplug ethernet now."
