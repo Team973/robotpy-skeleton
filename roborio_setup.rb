@@ -78,17 +78,15 @@ def sudo(*args)
   system "/usr/bin/sudo", *args
 end
 
-if OS.mac?
-  def getc # NOTE only tested on OS X
-    system "/bin/stty raw -echo"
-    if STDIN.respond_to?(:getbyte)
-      STDIN.getbyte
-    else
-      STDIN.getc
-    end
-  ensure
-    system "/bin/stty -raw echo"
+def getc
+  system "/bin/stty raw -echo"
+  if STDIN.respond_to?(:getbyte)
+    STDIN.getbyte
+  else
+    STDIN.getc
   end
+ensure
+  system "/bin/stty -raw echo"
 end
 
 def wait_for_user
@@ -99,7 +97,7 @@ def wait_for_user
   abort unless (c == 13) || (c == 10)
 end
 
-# For finding python3
+# For finding robotpy-installer
 def robotpy_installer
   @robotpy_installer ||= if ENV["robotpy-installer"] && File.executable?(ENV["robotpy-installer"])
     ENV["robotpy-installer"]
@@ -136,7 +134,9 @@ wait_for_user
 
 
 ohai "Grabbing dependencies..."
-system pip3, "-qq", "install", "robotpy-installer"
+if !robotpy_installer
+  system pip3, "-qq", "install", "robotpy-installer"
+end
 
 ohai "Downloading RobotPy for RoboRio..."
 system robotpy_installer, "download-robotpy"
