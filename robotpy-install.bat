@@ -12,7 +12,7 @@ if %ARGV[0]%=="973" (
   set REPO=https://github.com/team973/robotpy-skeleton
 )
 
-set REPO_LOCATION=%HOMEPATH%/GitHub/%ROBOT_REPOSITORY%
+set REPO_LOCATION=%HOMEPATH%\GitHub\%ROBOT_REPOSITORY%
 
 echo Creating install directory...
 if not exist "C:\robotpy-install\" mkdir C:\robotpy-install
