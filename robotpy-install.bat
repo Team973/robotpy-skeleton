@@ -5,11 +5,11 @@ if %ARGV[0]%=="973" (
   echo Using 973's 2017-offseason...
   set ROBOT_REPOSITORY=2017-offseason
   set REPO=https://github.com/team973/2017-offseason
-) else
+) else (
   echo No argument supplied/argument not supported, defaulting...
-  set ROBOT_REPOSITORY=robotpy-skeleton)
+  set ROBOT_REPOSITORY=robotpy-skeleton
   set REPO=https://github.com/team973/robotpy-skeleton
-end
+)
 
 echo Creating install directory...
 if not exist "C:\robotpy-install\" mkdir C:\robotpy-install
@@ -33,7 +33,7 @@ for /f %%a in (atompackages) do (
   apm install %%a || goto :error
 )
 
-if not exist "" (
+if not exist "%HOMEPATH%\AppData\Local\Programs\Python\Python36-32\" (
   if not exist "python-3.6.2.exe" (
     echo Downloading Python 3.6.2...
     powershell -Command "Invoke-WebRequest https://www.python.org/ftp/python/3.6.2/python-3.6.2.exe -OutFile python-3.6.2.exe" || goto :error
@@ -45,7 +45,7 @@ if not exist "" (
 echo Installing Python Modules...
 py -3 -m pip install pyfrc coverage robotpy-ctre robotpy-installer || goto :error
 
-if not exist "" (
+if not exist "C:\Program/ Files\Git\" (
   if not exist "Git-2.14.1-64-bit.exe" (
     echo Downloading Git...
     powershell -Command "Invoke-WebRequest https://github.com/git-for-windows/git/releases/download/v2.14.1.windows.1/Git-2.14.1-64-bit.exe -OutFile Git-2.14.1-64-bit.exe" || goto :error
