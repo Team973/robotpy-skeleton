@@ -1,5 +1,6 @@
 @echo off
 set ARGV[0]=%1
+if %1.==. set ARGV[0]=none
 
 if %ARGV[0]%=="973" (
   echo Using 973's 2017-offseason...
