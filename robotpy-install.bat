@@ -46,7 +46,7 @@ if not exist "%HOMEPATH%\AppData\Local\Programs\Python\Python36-32\" (
 echo Installing Python Modules...
 py -3 -m pip install pyfrc coverage robotpy-ctre robotpy-installer || goto :error
 
-if not exist "C:\Program/ Files\Git\" (
+if not exist "C:\Program Files\Git\" (
   if not exist "Git-2.14.1-64-bit.exe" (
     echo Downloading Git...
     powershell -Command "Invoke-WebRequest https://github.com/git-for-windows/git/releases/download/v2.14.1.windows.1/Git-2.14.1-64-bit.exe -OutFile Git-2.14.1-64-bit.exe" || goto :error
