@@ -12,6 +12,8 @@ if %ARGV[0]%=="973" (
   set REPO=https://github.com/team973/robotpy-skeleton
 )
 
+set REPO_LOCATION=%HOMEPATH%/GitHub/%ROBOT_REPOSITORY%
+
 echo Creating install directory...
 if not exist "C:\robotpy-install\" mkdir C:\robotpy-install
 cd C:\robotpy-install
@@ -44,7 +46,7 @@ if not exist "%HOMEPATH%\AppData\Local\Programs\Python\Python36-32\" (
 )
 
 echo Installing Python Modules...
-py -3 -m pip install pyfrc coverage robotpy-ctre robotpy-installer || goto :error
+py -3 -m pip -qq install pyfrc coverage robotpy-ctre robotpy-installer || goto :error
 
 if not exist "C:\Program Files\Git\" (
   if not exist "Git-2.14.1-64-bit.exe" (
@@ -58,18 +60,19 @@ if not exist "C:\Program Files\Git\" (
 echo Creating GitHub folder...
 if not exist "%HOMEPATH%\Documents\GitHub" mkdir %HOMEPATH%\Documents\GitHub
 cd %HOMEPATH%\Documents\GitHub
+if not exist "%REPO_LOCATION%" mkdir %REPO_LOCATION%
+cd %REPO_LOCATION%
 
-if %ARGV[0]%=="973" (
-  echo Cloning 2017-offseason...
-  git clone https://github.com/team973/2017-offseason || goto :error
-  echo Testing robot.py...
-  py -3 2017-offseason\wood\src\robot.py test || goto :error
-) else (
-  echo Cloning robotpy-skeleton...
-  git clone https://github.com/team973/robotpy-skeleton || goto :error
-  echo Testing robot.py...
-  py -3 robotpy-skeleton\src\robot.py test || goto :error
-)
+echo Cloning %ROBOT_REPOSITORY%...
+git init -q || goto :error
+git config remote.origin.url %REPO% || goto :error
+git config remote.origin.fetch +refs/heads/*:refs/remotes/origin/* || goto :error
+git config core.autocrlf false || goto :error
+git fetch origin master:refs/remotes/origin/master --tags --force || goto :error
+git reset --hard origin/master || goto :error
+
+echo Testing robot.py...
+py -3 %REPO_LOCATION%\src\robot.py test || goto :error
 
 echo Success! We are done"
 
