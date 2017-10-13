@@ -234,7 +234,7 @@ elsif OS.linux?
     begin
       sudo "/usr/bin/dpkg", "-i", "atom-amd64.deb"
     rescue Exception # Shouldn't do this, but too lazy to find actual exception
-      sudo "/usr/bin/apt", "-f", "install"
+      sudo "/usr/bin/apt", "-f", "-qq", "-y", "install"
     end
   end
   system "/usr/bin/apm install $(curl -fsSL https://raw.githubusercontent.com/team973/robotpy-skeleton/master/atompackages)"
